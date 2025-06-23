@@ -1,0 +1,25 @@
+{
+  "name": "mubloggingapi",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Angelito031/Multi-User-Blogging-Platform-API#readme",
+  "bugs": {
+    "url": "https://github.com/Angelito031/Multi-User-Blogging-Platform-API/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Angelito031/Multi-User-Blogging-Platform-API.git"
+  },
+  "license": "ISC",
+  "author": "Angelito I. Casas",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.2"
+  }
+}
