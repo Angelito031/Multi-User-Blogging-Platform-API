@@ -1,6 +1,11 @@
+import client from "../db/db.js";
+
 export const GetAllUsers = async (req, res) => {
   try {
     const query = "SELECT * FROM users";
+    const result = await client.query(query);
+
+    console.log(result);
 
     return res.json({ message: "Hello" });
   } catch (error) {
