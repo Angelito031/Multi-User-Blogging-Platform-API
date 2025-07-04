@@ -63,25 +63,37 @@ export const CreateRole = async (req, res) => {
 
 export const UpdateRole = async (req, res) => {
   try {
-    const { role, description } = req.body;
     const { id } = req.params;
+    const { role, description } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "Invalid Role ID" });
+    }
+
+    if (!role) {
+      return res.status(400).json({ message: "Role name is required." });
+    }
+
+    if (!description) {
+      return res.status(400).json({ message: "Role descript is required." });
+    }
+
     const findRoleQuery = "SELECT * FROM roles WHERE id = $1";
     const { rows } = await client.query(findRoleQuery, [id]);
 
     if (rows.length === 0) {
-      return res
-        .status(200)
-        .json({ message: `There is no role by the id: ${id}` });
+      return res.status(404).json({ message: `No role found with id: ${id}` });
     }
-    const roleData = rows[0];
-    roleData.role = role;
-    roleData.description = description;
 
     const updateRoleQuery =
       "UPDATE roles SET role = $1, description = $2 WHERE id = $3";
+    const result = await client.query(updateRoleQuery, [role, description, id]);
 
-    await client.query(updateRoleQuery, [role, description, id]);
-    return res.json({ message: "Updated a role" });
+    if (result.rowCount === 0) {
+      return res.status(400).json({ message: "Role update failed" });
+    }
+
+    return res.status(200).json({ message: "Role updated successfully" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
