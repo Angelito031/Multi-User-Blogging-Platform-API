@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  ChangePassword,
   CreateUser,
   DeleteAllUsers,
   DeleteUserById,
@@ -15,5 +16,7 @@ UserRoutes.route("/:id")
   .get(GetUserById)
   .put(UpdateUser)
   .delete(DeleteUserById);
+
+UserRoutes.route("/changepass/:id").post(ChangePassword);
 
 export default UserRoutes;

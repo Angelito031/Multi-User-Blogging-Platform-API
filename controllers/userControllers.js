@@ -50,6 +50,60 @@ export const GetUserById = async (req, res) => {
   }
 };
 
+export const ChangePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { old_password, new_password } = req.body;
+
+    if (!id) {
+      return res.status(200).json({ message: "Invalid User ID" });
+    }
+
+    if (!old_password) {
+      return res.status(200).json({ message: "Old Password is empty." });
+    }
+
+    if (!new_password) {
+      return res.status(200).json({ message: "New Password is empty." });
+    }
+
+    const query = "SELECT users.password FROM users WHERE users.uid = $1";
+    const result = await client.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: "User has not been found" });
+    }
+
+    const isPasswordValid = bcrypt.compareSync(
+      old_password,
+      result.rows[0].password
+    );
+
+    if (!isPasswordValid) {
+      return res.status(200).json({ message: "Wrong old password." });
+    }
+
+    const hashpassword = bcrypt.hashSync(new_password, 10);
+    const changePasswordQuery =
+      "UPDATE users SET password = $1 WHERE users.uid = $2";
+    const changePasswordResult = await client.query(changePasswordQuery, [
+      hashpassword,
+      id,
+    ]);
+
+    if (!changePasswordResult.rowCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "An error has occured while changing the password" });
+    }
+
+    return res.status(200).json({ message: "Changed Password successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const CreateUser = async (req, res) => {
   try {
     const { firstname, lastname, username, password, role_id } = req.body;
