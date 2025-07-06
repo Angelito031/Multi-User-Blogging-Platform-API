@@ -91,7 +91,7 @@ export const ChangePassword = async (req, res) => {
       id,
     ]);
 
-    if (!changePasswordResult.rowCount === 0) {
+    if (changePasswordResult.rowCount === 0) {
       return res
         .status(200)
         .json({ message: "An error has occured while changing the password" });
