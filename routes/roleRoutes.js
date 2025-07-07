@@ -1,19 +1,8 @@
 import express from "express";
-import {
-  CreateRole,
-  DeleteAllRoles,
-  DeleteRoleById,
-  GetAllRoles,
-  GetRoleById,
-  UpdateRole,
-} from "../controllers/roleControllers.js";
+import { GetAllRoles } from "../controllers/roleControllers.js";
+import { isAuthenticated, isRoleAllowed } from "../middleware/auth.js";
 
 const RoleRoutes = express.Router();
 
-RoleRoutes.route("/").get(GetAllRoles).post(CreateRole).delete(DeleteAllRoles);
-RoleRoutes.route("/:id")
-  .get(GetRoleById)
-  .put(UpdateRole)
-  .delete(DeleteRoleById);
-
+RoleRoutes.route("/").get(isAuthenticated, isRoleAllowed("admin"), GetAllRoles);
 export default RoleRoutes;
