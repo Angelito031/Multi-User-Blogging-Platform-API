@@ -52,7 +52,10 @@ export const CreateRole = async (req, res) => {
     if (!description) {
       return res.status(206).json({ message: "Description is required." });
     }
-    await client.query(query, [role, description]);
+
+    const name = role.toLowerCase();
+
+    await client.query(query, [name, description]);
 
     return res.status(201).json({ message: "New Role has been created." });
   } catch (error) {

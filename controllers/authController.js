@@ -18,7 +18,7 @@ export const Authenticate = async (req, res) => {
     }
 
     const query =
-      "SELECT users.uid, users.username, users.password FROM users WHERE users.username = $1";
+      "SELECT users.uid, users.username, users.password, users.role_id FROM users WHERE users.username = $1";
     const { rows } = await client.query(query, [username]);
 
     if (rows.length === 0) {
@@ -35,6 +35,7 @@ export const Authenticate = async (req, res) => {
     const accessToken = jwt.sign(
       {
         uid: rows[0].uid,
+        role_id: rows[0].role_id,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "15m" }

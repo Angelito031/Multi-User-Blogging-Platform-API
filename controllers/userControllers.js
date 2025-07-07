@@ -7,8 +7,6 @@ export const GetAllUsers = async (req, res) => {
       "SELECT users.uid, users.firstname, users.lastname, users.username, roles.role AS role FROM users LEFT JOIN roles ON users.role_id = roles.id";
     const result = await client.query(query);
 
-    console.log(result);
-
     if (result.rows.length === 0) {
       return res
         .status(200)
@@ -106,7 +104,7 @@ export const ChangePassword = async (req, res) => {
 
 export const CreateUser = async (req, res) => {
   try {
-    const { firstname, lastname, username, password, role_id } = req.body;
+    const { firstname, lastname, username, password } = req.body;
     const query =
       "INSERT INTO users (firstname, lastname, username, password, role_id) VALUES ($1, $2, $3, $4, $5)";
 
@@ -116,7 +114,7 @@ export const CreateUser = async (req, res) => {
       lastname,
       username,
       hashpassword,
-      role_id,
+      3, //Fixed Role (READER ROLE ID)
     ]);
 
     if (result.rowCount === 1) {
@@ -163,7 +161,7 @@ export const UpdateUser = async (req, res) => {
     const findUserResult = await client.query(findUserQuery, [id]);
 
     if (findUserResult.rows.length === 0) {
-      return res.status(200).json({ message: "User has not been found" });
+      return res.status(404).json({ message: "User has not been found" });
     }
 
     const roleCheck = "SELECT * FROM roles WHERE roles.id = $1";
@@ -171,6 +169,14 @@ export const UpdateUser = async (req, res) => {
 
     if (roleCheckResult.rows.length === 0) {
       return res.status(400).json({ message: `Invalid role_id: ${role_id}` });
+    }
+
+    const isAdmin = req.user.role_id === 1; //ADMIN ROLE ID
+
+    if (!isAdmin && req.user.uid !== parseInt(id)) {
+      return res
+        .status(403)
+        .json({ message: "You are not allowed to modify this user." });
     }
 
     const updateUserQuery =
@@ -198,7 +204,15 @@ export const DeleteUserById = async (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-      return res.status(200).json({ message: "Invalid User ID" });
+      return res.status(400).json({ message: "Invalid User ID" });
+    }
+
+    const isAdmin = req.user.role_id === 1; //ADMIN ROLE ID
+
+    if (!isAdmin && req.user.uid !== parseInt(id)) {
+      return res
+        .status(403)
+        .json({ message: "You are not allowed to modify this user." });
     }
 
     const findUserQuery =
@@ -211,7 +225,7 @@ export const DeleteUserById = async (req, res) => {
 
       return res.status(200).json({ message: "User has been removed" });
     } else {
-      return res.status(200).json({ message: "User has not been found" });
+      return res.status(404).json({ message: "User has not been found" });
     }
   } catch (error) {
     console.log(error);
@@ -221,6 +235,21 @@ export const DeleteUserById = async (req, res) => {
 
 export const DeleteAllUsers = async (req, res) => {
   try {
+    const { confirm } = req.body;
+    const isAdmin = req.user.role_id === 1; //ADMIN ROLE ID
+
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "Only admins are allowed to delete all users.." });
+    }
+
+    if (!confirm) {
+      return res
+        .status(400)
+        .json({ message: "Confirmation required to delete all users." });
+    }
+
     const query = "DELETE FROM users";
     await client.query(query);
 
