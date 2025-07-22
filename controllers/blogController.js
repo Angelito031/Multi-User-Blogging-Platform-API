@@ -5,7 +5,7 @@ export const GetAllBlogs = async (req, res) => {
     const { last_bid = 0, limit = 10 } = req.params;
 
     const query =
-      "SELECT blogs.bid, blogs.title, blogs.content, blogs.created_at, (users.firstname users.lastname) AS author_name FROM blogs LEFT JOIN users ON blogs.author_id = users.uid WHERE blogs.bid < $1 ORDER BY blogs.bid DESC LIMIT $2";
+      "SELECT blogs.bid, blogs.title, blogs.content, blogs.created_at, (users.firstname || ' ' || users.lastname) AS author_name FROM blogs LEFT JOIN users ON blogs.author_id = users.uid WHERE blogs.bid < $1 ORDER BY blogs.bid DESC LIMIT $2";
 
     const result = await client.query(query, [last_bid, limit]);
 
@@ -35,7 +35,7 @@ export const GetBlogById = async (req, res) => {
     }
 
     const query =
-      "SELECT blogs.bid, blogs.title, blogs.content, blogs.created_at, (users.firstname, users.lastname) AS author_name FROM blogs LEFT JOIN users ON blogs.author_id = users.uid WHERE blogs.bid = $1";
+      "SELECT blogs.bid, blogs.title, blogs.content, blogs.created_at, (users.firstname || ' ' || users.lastname) FROM blogs LEFT JOIN users ON blogs.author_id = users.uid WHERE blogs.bid = $1";
 
     const result = await client.query(query, [id]);
 

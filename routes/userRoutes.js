@@ -13,12 +13,12 @@ import { isAuthenticated, isRoleAllowed } from "../middleware/auth.js";
 const UserRoutes = express.Router();
 
 UserRoutes.route("/")
-  .get(isAuthenticated, isRoleAllowed("admin", "editor", "reader"), GetAllUsers)
+  .get(isAuthenticated, isRoleAllowed("admin", "editor"), GetAllUsers)
   .post(isAuthenticated, isRoleAllowed("admin", "reader"), CreateUser)
   .delete(isAuthenticated, isRoleAllowed("admin"), DeleteAllUsers);
 UserRoutes.route("/:id")
   .get(isAuthenticated, isRoleAllowed("admin", "editor", "reader"), GetUserById)
-  .put(isAuthenticated, isRoleAllowed("admin", "editor", "reader"), UpdateUser)
+  .put(isAuthenticated, isRoleAllowed("admin"), UpdateUser)
   .delete(
     isAuthenticated,
     isRoleAllowed("admin", "editor", "reader"),
