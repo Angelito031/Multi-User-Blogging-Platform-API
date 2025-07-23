@@ -69,16 +69,10 @@ Built with Node.js, Express, PostgreSQL, JWT.
    REFRESH_TOKEN_SECRET="ADD HERE YOU REFRESH SECRET KEY"
 
    ```
-
-4. **Initialize database**
-
+   
+4. **Start the API server**
    ```bash
-   npm run db:init    # or run migrations manually
-   ```
-
-5. **Start the API server**
-   ```bash
-   npm start          # or npm run dev
+   node index.js   
    ```
 
 ---
