@@ -86,10 +86,6 @@ Built with Node.js, Express, PostgreSQL, JWT.
 ## 🧭 API Endpoints
 
 All endpoint must have a `/api` e.g. `/api/blogs` or `/api/auth/login`.
-app.use("/api/users", UserRoutes);
-app.use("/api/roles", RoleRoutes);
-app.use("/api/blogs", BlogRoutes);
-app.use("/api/comments", CommentRoutes);
 
 ### Authentication
 
