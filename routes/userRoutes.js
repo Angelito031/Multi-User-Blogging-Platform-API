@@ -14,7 +14,7 @@ const UserRoutes = express.Router();
 
 UserRoutes.route("/")
   .get(isAuthenticated, isRoleAllowed("admin", "editor"), GetAllUsers)
-  .post(isAuthenticated, isRoleAllowed("admin", "reader"), CreateUser)
+  .post(CreateUser)
   .delete(isAuthenticated, isRoleAllowed("admin"), DeleteAllUsers);
 UserRoutes.route("/:id")
   .get(isAuthenticated, isRoleAllowed("admin", "editor", "reader"), GetUserById)
